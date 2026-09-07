@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Save Form Draft</title>
+	<style>
+		:root {
+			font-family: Arial, sans-serif;
+			color: #172033;
+			background: #eef3f8;
+		}
+
+		body {
+			display: grid;
+			min-height: 100vh;
+			margin: 0;
+			place-items: center;
+		}
+
+		form {
+			width: min(90%, 380px);
+			padding: 2rem;
+			background: #ffffff;
+			border: 1px solid #d7e0ea;
+			border-radius: 8px;
+			box-shadow: 0 8px 24px rgb(23 32 51 / 10%);
+		}
+
+		h1 {
+			margin: 0 0 1.5rem;
+			font-size: 1.5rem;
+		}
+
+		label {
+			display: grid;
+			gap: 0.45rem;
+			margin-top: 1rem;
+			font-weight: 700;
+		}
+
+		input,
+		textarea,
+		select,
+		button {
+			box-sizing: border-box;
+			width: 100%;
+			padding: 0.7rem;
+			border: 1px solid #9aa9ba;
+			border-radius: 4px;
+			font: inherit;
+		}
+
+		textarea {
+			min-height: 110px;
+			resize: vertical;
+		}
+
+		button {
+			margin-top: 1.25rem;
+			border-color: #1769aa;
+			color: #ffffff;
+			background: #1769aa;
+			cursor: pointer;
+			font-weight: 700;
+		}
+
+		button:hover {
+			background: #125486;
+		}
+
+		#status {
+			min-height: 1.25rem;
+			margin: 1rem 0 0;
+			color: #1769aa;
+		}
+	</style>
+</head>
+<body>
+	<form id="profile-form">
+		<h1>Your profile</h1>
+
+		<label for="name">
+			Name
+			<input id="name" name="name" autocomplete="name" required>
+		</label>
+
+		<label for="email">
+			Email
+			<input id="email" name="email" type="email" autocomplete="email" required>
+		</label>
+
+		<label for="bio">
+			Short bio
+			<textarea id="bio" name="bio" placeholder="Tell us a little about yourself"></textarea>
+		</label>
+
+		<button type="submit">Submit</button>
+		<p id="status" aria-live="polite"></p>
+	</form>
+
+	<script>
+		function enableFormDraft(form, storageKey, statusElement) {
+			const savedDraft = localStorage.getItem(storageKey);
+
+			if (savedDraft) {
+				const values = JSON.parse(savedDraft);
+
+				Object.entries(values).forEach(([name, value]) => {
+					const field = form.elements[name];
+					if (!field) return;
+
+					if (field.type === 'checkbox' || field.type === 'radio') {
+						field.checked = value;
+					} else {
+						field.value = value;
+					}
+				});
+
+				statusElement.textContent = 'Saved draft restored.';
+			}
+
+			form.addEventListener('input', () => {
+				const values = {};
+
+				Array.from(form.elements).forEach((field) => {
+					if (!field.name) return;
+					values[field.name] = field.type === 'checkbox' || field.type === 'radio'
+						? field.checked
+						: field.value;
+				});
+
+				localStorage.setItem(storageKey, JSON.stringify(values));
+				statusElement.textContent = 'Draft saved automatically.';
+			});
+
+			form.addEventListener('submit', (event) => {
+				event.preventDefault();
+				localStorage.removeItem(storageKey);
+				statusElement.textContent = 'Form submitted and saved draft cleared.';
+			});
+		}
+
+		enableFormDraft(
+			document.querySelector('#profile-form'),
+			'profile-form-draft',
+			document.querySelector('#status')
+		);
+	</script>
+</body>
+</html>
