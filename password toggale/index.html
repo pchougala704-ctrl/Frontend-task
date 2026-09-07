@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Password Visibility Toggle</title>
+	<style>
+		:root {
+			font-family: Arial, sans-serif;
+			color: #172033;
+			background: #eef3f8;
+		}
+
+		body {
+			display: grid;
+			min-height: 100vh;
+			margin: 0;
+			place-items: center;
+		}
+
+		form {
+			width: min(90%, 360px);
+			padding: 2rem;
+			background: #ffffff;
+			border: 1px solid #d7e0ea;
+			border-radius: 8px;
+			box-shadow: 0 8px 24px rgb(23 32 51 / 10%);
+		}
+
+		h1 {
+			margin: 0 0 1.5rem;
+			font-size: 1.5rem;
+		}
+
+		label {
+			display: block;
+			margin-bottom: 0.5rem;
+			font-weight: 700;
+		}
+
+		input[type="password"],
+		input[type="text"] {
+			box-sizing: border-box;
+			width: 100%;
+			padding: 0.75rem;
+			border: 1px solid #9aa9ba;
+			border-radius: 4px;
+			font: inherit;
+		}
+
+		.toggle {
+			display: flex;
+			gap: 0.5rem;
+			align-items: center;
+			margin: 0.75rem 0 1.25rem;
+			font-weight: 400;
+		}
+
+		button {
+			width: 100%;
+			padding: 0.75rem;
+			border: 0;
+			border-radius: 4px;
+			color: #ffffff;
+			background: #1769aa;
+			cursor: pointer;
+			font: inherit;
+			font-weight: 700;
+		}
+
+		button:hover {
+			background: #125486;
+		}
+
+		#message {
+			min-height: 1.25rem;
+			margin: 1rem 0 0;
+			color: #1769aa;
+		}
+	</style>
+</head>
+<body>
+	<form id="password-form">
+		<h1>Set your password</h1>
+
+		<label for="password">Password</label>
+		<input id="password" name="password" type="password" required autocomplete="new-password">
+
+		<label class="toggle" for="show-password">
+			<input id="show-password" type="checkbox">
+			Show password
+		</label>
+
+		<button type="submit">Submit</button>
+		<p id="message" aria-live="polite"></p>
+	</form>
+
+	<script>
+		const passwordInput = document.querySelector('#password');
+		const showPassword = document.querySelector('#show-password');
+		const passwordForm = document.querySelector('#password-form');
+		const message = document.querySelector('#message');
+
+		showPassword.addEventListener('change', () => {
+			passwordInput.type = showPassword.checked ? 'text' : 'password';
+		});
+
+		passwordForm.addEventListener('submit', (event) => {
+			event.preventDefault();
+			message.textContent = 'Password entered successfully.';
+		});
+	</script>
+</body>
+</html>
