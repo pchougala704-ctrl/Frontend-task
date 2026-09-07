@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Dynamic Table Rows</title>
+	<style>
+		:root {
+			font-family: Arial, sans-serif;
+			color: #172033;
+			background: #eef3f8;
+		}
+
+		body {
+			box-sizing: border-box;
+			min-height: 100vh;
+			margin: 0;
+			padding: 2rem 1rem;
+		}
+
+		main {
+			width: min(100%, 900px);
+			margin: 0 auto;
+		}
+
+		h1 {
+			margin: 0 0 1.5rem;
+			font-size: 1.8rem;
+		}
+
+		form,
+		.table-container {
+			padding: 1.25rem;
+			background: #ffffff;
+			border: 1px solid #d7e0ea;
+			border-radius: 8px;
+			box-shadow: 0 8px 24px rgb(23 32 51 / 8%);
+		}
+
+		form {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr) auto;
+			gap: 1rem;
+			align-items: end;
+		}
+
+		label {
+			display: grid;
+			gap: 0.4rem;
+			font-weight: 700;
+		}
+
+		input,
+		select,
+		button {
+			box-sizing: border-box;
+			min-height: 2.6rem;
+			padding: 0.6rem 0.7rem;
+			border: 1px solid #9aa9ba;
+			border-radius: 4px;
+			font: inherit;
+		}
+
+		button {
+			border-color: #1769aa;
+			color: #ffffff;
+			background: #1769aa;
+			cursor: pointer;
+			font-weight: 700;
+		}
+
+		button:hover {
+			background: #125486;
+		}
+
+		.table-container {
+			margin-top: 1.5rem;
+			overflow-x: auto;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			text-align: left;
+		}
+
+		th,
+		td {
+			padding: 0.8rem;
+			border-bottom: 1px solid #d7e0ea;
+		}
+
+		th {
+			color: #42546a;
+			font-size: 0.85rem;
+			text-transform: uppercase;
+		}
+
+		td:last-child,
+		th:last-child {
+			text-align: right;
+		}
+
+		.delete-button {
+			min-height: auto;
+			padding: 0.4rem 0.6rem;
+			border-color: #b42318;
+			background: #b42318;
+			font-size: 0.9rem;
+		}
+
+		.empty-message {
+			color: #5e6c7e;
+			text-align: center;
+		}
+
+		@media (max-width: 700px) {
+			form {
+				grid-template-columns: 1fr;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<h1>Team Members</h1>
+
+		<form id="row-form">
+			<label for="name">
+				Name
+				<input id="name" name="name" required>
+			</label>
+
+			<label for="email">
+				Email
+				<input id="email" name="email" type="email" required>
+			</label>
+
+			<label for="role">
+				Role
+				<select id="role" name="role" required>
+					<option value="">Choose a role</option>
+					<option>Designer</option>
+					<option>Developer</option>
+					<option>Manager</option>
+				</select>
+			</label>
+
+			<button type="submit">Add row</button>
+		</form>
+
+		<section class="table-container" aria-label="Team members table">
+			<table>
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Email</th>
+						<th>Role</th>
+						<th>Action</th>
+					</tr>
+				</thead>
+				<tbody id="table-body">
+					<tr id="empty-row">
+						<td class="empty-message" colspan="4">No team members added yet.</td>
+					</tr>
+				</tbody>
+			</table>
+		</section>
+	</main>
+
+	<script>
+		const rowForm = document.querySelector('#row-form');
+		const tableBody = document.querySelector('#table-body');
+		const emptyRow = document.querySelector('#empty-row');
+
+		rowForm.addEventListener('submit', (event) => {
+			event.preventDefault();
+
+			const formData = new FormData(rowForm);
+			const row = document.createElement('tr');
+
+			['name', 'email', 'role'].forEach((field) => {
+				const cell = document.createElement('td');
+				cell.textContent = formData.get(field);
+				row.appendChild(cell);
+			});
+
+			const actionCell = document.createElement('td');
+			const deleteButton = document.createElement('button');
+			deleteButton.type = 'button';
+			deleteButton.className = 'delete-button';
+			deleteButton.textContent = 'Delete';
+			deleteButton.addEventListener('click', () => row.remove());
+			actionCell.appendChild(deleteButton);
+			row.appendChild(actionCell);
+
+			emptyRow.remove();
+			tableBody.appendChild(row);
+			rowForm.reset();
+			rowForm.elements.name.focus();
+		});
+	</script>
+</body>
+</html>
